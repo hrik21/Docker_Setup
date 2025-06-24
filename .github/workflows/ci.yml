@@ -26,7 +26,7 @@ jobs:
           pip install pytest
 
       - name: ✅ Run unit tests
-        run: pytest
+        run: pytest -s test/
 
       - name: 🐳 Build Docker image
         run: docker build -t flask-cicd-app .
