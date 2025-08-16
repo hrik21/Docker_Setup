@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, send_file, jsonify
 import secrets
 import os
+import pandas
 
 # Import our custom modules
 from database import init_database, save_pdf_to_db, get_pdf_by_id, get_pdf_file_path, get_all_pdfs, get_database_stats
