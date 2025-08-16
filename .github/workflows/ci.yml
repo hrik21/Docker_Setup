@@ -67,7 +67,17 @@ jobs:
 
       - name: 🔍 Health check on container
         run: |
-          sleep 10
+          echo "Waiting for container to be ready..."
+          for i in {1..30}; do
+            if curl -f http://localhost:8080 >/dev/null 2>&1; then
+              echo "✓ Container is responding"
+              break
+            fi
+            echo "Attempt $i/30: Container not ready yet, waiting 2 seconds..."
+            sleep 2
+          done
+          
+          # Final health checks
           curl --fail http://localhost:8080 || exit 1
           curl --fail http://localhost:8080/api/stats || exit 1
           echo "✓ Container health check passed"
