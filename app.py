@@ -89,6 +89,11 @@ def api_stats():
     stats = get_database_stats()
     return jsonify(stats)
 
+@app.route("/health")
+def health_check():
+    """Health check endpoint for Docker"""
+    return jsonify({"status": "healthy", "message": "PDF Upload App is running"}), 200
+
 if __name__ == "__main__":
     # Setup everything when app starts
     setup_upload_folder()
