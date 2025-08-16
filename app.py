@@ -71,7 +71,8 @@ def admin_db():
     <pre>{stats['columns']}</pre>
     
     <h2>Stats:</h2>
-    <p>Total PDFs: {stats['total_count']}</p>
+    <p>Total PDFs: {stats['total_records']}</p>
+    <p>Database Size: {stats['database_size_mb']} MB</p>
     
     <h2>All Data:</h2>
     <table border="1" style="border-collapse: collapse;">
