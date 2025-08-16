@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>All Uploaded PDFs</h1>
+
+{% if pdfs %}
+    <div style="margin: 20px 0;">
+        {% for pdf in pdfs %}
+            <div style="border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px; background-color: #f9f9f9;">
+                <h3>{{ pdf[2] }}</h3>
+                <p><strong>Upload Date:</strong> {{ pdf[4] }}</p>
+                <div>
+                    <a href="{{ url_for('view_pdf', pdf_id=pdf[0]) }}" class="btn">View PDF</a>
+                    <button onclick="window.open('{{ url_for('serve_pdf', pdf_id=pdf[0]) }}', '_blank')" 
+                            class="btn" style="margin-left: 10px;">Open in New Tab</button>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No PDFs uploaded yet.</p>
+    <a href="{{ url_for('upload_form') }}" class="btn">Upload Your First PDF</a>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>View PDF: {{ pdf[2] }}</h1>
+
+<div style="margin: 20px 0;">
+    <p><strong>Original Filename:</strong> {{ pdf[2] }}</p>
+    <p><strong>Upload Date:</strong> {{ pdf[4] }}</p>
+</div>
+
+<div style="text-align: center; margin: 20px 0;">
+    <button onclick="window.open('{{ url_for('serve_pdf', pdf_id=pdf[0]) }}', '_blank')" class="btn">
+        Open PDF in New Tab
+    </button>
+</div>
+
+<div style="border: 1px solid #ccc; border-radius: 5px; height: 600px; margin: 20px 0;">
+    <embed src="{{ url_for('serve_pdf', pdf_id=pdf[0]) }}" 
+           type="application/pdf" 
+           width="100%" 
+           height="100%"
+           style="border-radius: 5px;">
+</div>
+
+<div style="text-align: center; margin: 20px 0;">
+    <a href="{{ url_for('upload_form') }}" class="btn">Upload Another PDF</a>
+    <a href="{{ url_for('list_pdfs') }}" class="btn" style="margin-left: 10px;">View All PDFs</a>
+</div>
+{% endblock %}

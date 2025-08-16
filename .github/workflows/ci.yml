@@ -9,15 +9,19 @@ on:
 jobs:
   test-build-run:
     runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: [3.9, '3.10', '3.11']
 
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v3
 
-      - name: 🐍 Set up Python
+      - name: 🐍 Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: ${{ matrix.python-version }}
 
       - name: 📦 Install dependencies
         run: |
@@ -25,16 +29,51 @@ jobs:
           pip install -r requirements.txt
           pip install pytest
 
-      - name: ✅ Run unit tests
-        run: pytest -s test/
+      - name: ✅ Run database tests (standalone)
+        run: |
+          python test_database_only.py
+
+      - name: ✅ Run comprehensive unit tests
+        run: pytest -v test/
+
+      - name: 🧪 Test API endpoints
+        run: |
+          python -c "
+          import sys, os
+          sys.path.insert(0, '.')
+          from app import app
+          from database import init_database, save_pdf_to_db
+          
+          # Initialize test data
+          init_database()
+          save_pdf_to_db('test.pdf', 'test.pdf', 'uploads/test.pdf')
+          
+          # Test with Flask test client
+          with app.test_client() as client:
+              response = client.get('/api/stats')
+              assert response.status_code == 200
+              print('✓ API stats endpoint working')
+              
+              response = client.get('/admin/db')
+              assert response.status_code == 200
+              print('✓ Admin DB endpoint working')
+          "
 
       - name: 🐳 Build Docker image
         run: docker build -t flask-cicd-app .
 
       - name: 🚀 Run Docker container
-        run: docker run -d -p 8080:8080 flask-cicd-app
+        run: docker run -d -p 8080:8080 --name test-container flask-cicd-app
 
       - name: 🔍 Health check on container
         run: |
-          sleep 5
+          sleep 10
           curl --fail http://localhost:8080 || exit 1
+          curl --fail http://localhost:8080/api/stats || exit 1
+          echo "✓ Container health check passed"
+
+      - name: 🧹 Cleanup container
+        if: always()
+        run: |
+          docker stop test-container || true
+          docker rm test-container || true

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Upload PDF File</h1>
+
+<form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
+    <div class="upload-area">
+        <h3>Select PDF File to Upload</h3>
+        <input type="file" name="file" accept=".pdf" required style="margin: 20px 0;">
+        <br>
+        <button type="submit" class="btn">Upload PDF</button>
+    </div>
+</form>
+
+<script>
+// Add drag and drop functionality
+const uploadArea = document.querySelector('.upload-area');
+const fileInput = document.querySelector('input[type="file"]');
+
+uploadArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadArea.style.borderColor = '#007bff';
+    uploadArea.style.backgroundColor = '#f8f9fa';
+});
+
+uploadArea.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    uploadArea.style.borderColor = '#ccc';
+    uploadArea.style.backgroundColor = 'white';
+});
+
+uploadArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadArea.style.borderColor = '#ccc';
+    uploadArea.style.backgroundColor = 'white';
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        fileInput.files = files;
+    }
+});
+</script>
+{% endblock %}
